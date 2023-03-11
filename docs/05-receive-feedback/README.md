@@ -1,4 +1,4 @@
-# Sensordaten per MQTT versenden
+# Feedback empfangen
 
 In dieser Übung empfangen wir Daten vom Backend und stellen diese durch 
 ein visuelles Feedback dar.
