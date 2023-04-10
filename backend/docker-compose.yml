@@ -1,0 +1,52 @@
+version: '3.8'
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+
+services:
+
+  temperature-monitor:
+    build:
+      context: temperature-monitor
+    environment:
+      IOT_MQTT_HOST: broker.hivemq.com
+      IOT_MQTT_PORT: 1883
+      IOT_MQTT_USER:
+      IOT_MQTT_PASSWORD:
+      IOT_MQTT_SUB_TOPIC: iotlabclt23/+/temperature
+      IOT_MQTT_ACK_TOPIC: iotlabclt23/%s/ack
+      xIOT_SIMULATE_DEVICES: team99,team1,team2,team3,team4,team5
+      IOT_PORT: 2121
+    ports:
+      - 2121:2121
+
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    volumes:
+      - ./prometheus:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana
+    user: '472'
+    restart: always
+    environment:
+      GF_INSTALL_PLUGINS: 'grafana-clock-panel,grafana-simple-json-datasource'
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ./grafana/config.monitoring
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
