@@ -27,6 +27,13 @@ Ablauf:
 * [BMP280 Temperatursensor](docs/BMP280.md)
 * [TM1637 7-Segment Display](docs/Display.md)
 
+## Backend
+
+Als [Backend](backend/) nutzen wir einen einfachen
+[Go-Service](backend/temperature-monitor), der die Daten der Devices per MQTT
+empfängt und als Metriken in Prometheus bereitstellt und mit Grafana
+visualisiert.
+
 ## Autor
 
 Copyright 2023 by Jan Delgado, License MIT.
